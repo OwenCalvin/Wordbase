@@ -2,14 +2,14 @@
 let express = require('express')
 let bodyParser = require('body-parser')
 let mongo = require('mongoose')
-let session = require('express-session')
+let cors = require('cors')
 
 // Config
 let app = express()
-let schema = mongo.Schema;
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true}));
-app.use(session({secret: 'salty', resave: false, saveUninitialized: true}))
+let schema = mongo.Schema
+app.use(cors())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true}))
 mongo.connect('mongodb://localhost:27017/wordbase', { useMongoClient: true })
 mongo.Promise = global.Promise
 
@@ -17,7 +17,7 @@ mongo.Promise = global.Promise
 let wordSchema = mongo.model('words', new schema({
     title: String,
     color: String,
-    user_id: String,
+    _userId: schema.Types.ObjectId,
     datas: []
 }))
 
@@ -69,9 +69,12 @@ app.post('/insert', (req, res) => {
 })
 
 app.get('/get', (req, res) => {
-    wordSchema.find({user_id: User(req)._id}, (err, words) => {
-        res.send(words);
-    });
+    wordSchema.find({}, (err, words) => {
+        res.send(words)
+    })
+    /*wordSchema.find({user_id: User(req)._id}, (err, words) => {
+        res.send(words)
+    })*/
 })
 
 app.post('/log', (req, res) => {
@@ -110,4 +113,4 @@ function User(req, set = false) {
 }
 
 // Port to listen to
-app.listen(3000)
+app.listen(80)
