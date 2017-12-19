@@ -10,7 +10,7 @@ let schema = mongo.Schema
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true}))
-mongo.connect('mongodb://localhost:27017/wordbase', { useMongoClient: true })
+mongo.connect('mongodb://localhost:27017/Wordbase', { useMongoClient: true })
 mongo.Promise = global.Promise
 
 // MongoDB models
@@ -58,14 +58,19 @@ app.get('/', (req, res) => {
 })
 
 app.post('/insert', (req, res) => {
-    let userid = User(req)._id
+    //let userid = User(req)._id
     wordSchema.insertMany([new wordSchema({
         title: req.body.title,
         color: req.body.color,
-        user_id: userid,
+        _userId: req.body._userId,
         datas: req.body.datas   
     })])
-    res.send(userid)
+    res.send('OK')
+})
+
+app.post('/delete', (req, res) => {
+    wordSchema.remove({_id: req.body._id}, () => {})
+    res.send('OK')
 })
 
 app.get('/get', (req, res) => {
