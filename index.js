@@ -82,8 +82,8 @@ app.get('/get', (req, res) => {
     })*/
 })
 
-app.post('/log', (req, res) => {
-    userSchema.findOne({
+app.post('/login', (req, res) => {
+    /*userSchema.findOne({
         username: req.body.username,
         password: req.body.password
     }, (err, user) => {
@@ -93,7 +93,8 @@ app.post('/log', (req, res) => {
             res.send('You are not connected')
         }
         res.redirect('/')
-    })
+    })*/
+    res.send('OK');
 })
 
 app.post('/register', (req, res) => {
