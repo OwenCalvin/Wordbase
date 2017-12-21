@@ -31,7 +31,6 @@ let userSchema = mongo.model('users', new schema({
 
 // "/" ROUT IS ONLY FOR TESTS
 app.get('/', (req, res) => {
-    let user = User(req)
     res.send(
         `<h1>${user ? user.username : ''}</h1>
         <form action="/insert" method="post">
@@ -58,7 +57,6 @@ app.get('/', (req, res) => {
 })
 
 app.post('/insert', (req, res) => {
-    //let userid = User(req)._id
     wordSchema.insertMany([new wordSchema({
         title: req.body.title,
         color: req.body.color,
@@ -74,27 +72,23 @@ app.post('/delete', (req, res) => {
 })
 
 app.get('/get', (req, res) => {
-    wordSchema.find({}, (err, words) => {
+    wordSchema.find({_userId: mongo.Types.ObjectId(req.query._id)}, (err, words) => {
         res.send(words)
     })
-    /*wordSchema.find({user_id: User(req)._id}, (err, words) => {
-        res.send(words)
-    })*/
 })
 
 app.post('/login', (req, res) => {
-    /*userSchema.findOne({
-        username: req.body.username,
+    userSchema.findOne({
+        $or: [{'email': caseInsensitive(req.body.log)}, {'username': caseInsensitive(req.body.log)}],
         password: req.body.password
     }, (err, user) => {
+        console.log(user)
         if(user) {
-            User(req, user)
+            res.send(user)
         } else {
-            res.send('You are not connected')
+            res.send(null)
         }
-        res.redirect('/')
-    })*/
-    res.send('OK');
+    })
 })
 
 app.post('/register', (req, res) => {
@@ -103,7 +97,7 @@ app.post('/register', (req, res) => {
         email: req.body.email,
         password: req.body.password
     })])
-    res.send(req.body)
+    res.send('OK')
 })
 
 app.post('/disconnect', (req, res) => {
@@ -111,11 +105,8 @@ app.post('/disconnect', (req, res) => {
     res.redirect('/')
 })
 
-function User(req, set = false) {
-    if(set) {
-        req.session.user = set
-    }
-    return req.session.user
+function caseInsensitive(str) {
+    return new RegExp(['^', str, '$'].join(''), 'i');   
 }
 
 // Port to listen to
