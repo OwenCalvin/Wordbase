@@ -24,8 +24,10 @@
   },
   "homepage": "https://github.com/OwenCalvin/Wordbase#readme",
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
+    "email-validator": "^1.1.1",
     "express": "^4.16.2",
     "mongoose": "^4.13.6"
   }
