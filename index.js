@@ -29,6 +29,10 @@ const userSchema = mongo.model('users', new schema({
     password: String
 })) 
 
+app.get('/', (req, res) => {
+    res.send('Hello World')
+})
+
 // Functions
 app.post('/insert', (req, res) => {
     let datas = req.body.datas;
