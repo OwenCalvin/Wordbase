@@ -61,7 +61,7 @@ app.post('/delete', (req, res) => {
 app.get('/get', (req, res) => {
     wordSchema.find({_userId: mongo.Types.ObjectId(req.query._id)}, (err, words) => {
         res.send(words)
-    })
+    }).sort({title: 'asc'})
 })
 
 app.post('/fav', (req, res) => {
