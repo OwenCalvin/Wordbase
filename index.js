@@ -19,6 +19,7 @@ mongo.Promise = global.Promise
 const wordSchema = mongo.model('words', new schema({
     title: String,
     color: String,
+    fav: Boolean,
     _userId: schema.Types.ObjectId,
     datas: []
 }))
@@ -35,26 +36,44 @@ app.get('/', (req, res) => {
 
 // Functions
 app.post('/insert', (req, res) => {
-    let datas = req.body.datas;
-    datas = datas.filter(obj => obj.name.length > 0 || obj.value.lenghth > 0);
-    wordSchema.insertMany([new wordSchema({
-        title: req.body.title,
-        color: req.body.color,
-        _userId: req.body._userId,
-        datas: datas   
-    })])
-    res.send('OK')
+    let title = req.body.title
+    if(title.length > 0) {
+        let datas = req.body.datas
+        datas = datas.filter(obj => obj.name.length > 0 || obj.value.lenghth > 0)
+        wordSchema.insertMany([new wordSchema({
+            title: title,
+            color: req.body.color,
+            fav: false,
+            _userId: req.body._userId,
+            datas: datas   
+        })], () => {
+            res.send('OK')
+        })
+    }
 })
 
 app.post('/delete', (req, res) => {
-    wordSchema.remove({_id: req.body._id}, () => {})
-    res.send('OK')
+    wordSchema.remove({_id: req.body._id}, () => {
+        res.send('OK')
+    })
 })
 
 app.get('/get', (req, res) => {
     wordSchema.find({_userId: mongo.Types.ObjectId(req.query._id)}, (err, words) => {
         res.send(words)
     })
+})
+
+app.post('/fav', (req, res) => {
+    fav = req.body
+    wordSchema.findByIdAndUpdate(
+        fav._id, 
+        {$set: {fav: !fav.fav}},
+        {new: true}, 
+        (err, word) => {
+            res.send('OK')
+        }
+    )
 })
 
 app.post('/login', (req, res) => {
