@@ -97,6 +97,20 @@ app.post('/login', (req, res) => {
     })
 })
 
+app.post('/edit', (req, res) => {
+    id = req.body.id
+    index = req.body.index
+    data = req.body.data
+    wordSchema.findByIdAndUpdate(
+        id, 
+        {$set: {['datas.' + index]: data}},
+        {new: true}, 
+        (err, word) => {
+            res.send('OK')
+        }
+    )
+});
+
 app.post('/register', (req, res) => {
     let username = req.body.username
     let email = req.body.email
