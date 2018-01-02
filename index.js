@@ -99,11 +99,10 @@ app.post('/login', (req, res) => {
 
 app.post('/edit', (req, res) => {
     id = req.body.id
-    index = req.body.index
-    data = req.body.data
+    update = req.body.update
     wordSchema.findByIdAndUpdate(
         id, 
-        {$set: {['datas.' + index]: data}},
+        {$set: update},
         {new: true}, 
         (err, word) => {
             res.send('OK')
