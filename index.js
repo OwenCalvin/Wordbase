@@ -45,15 +45,17 @@ app.post('/insert', (req, res) => {
     let title = req.body.title
     if(title.length > 0) {
         let datas = req.body.datas
+        datas.map(item => { delete item._id; })
+        let fav = req.body.fav
         datas = datas.filter(obj => obj.name.length > 0 || obj.value.lenghth > 0)
         wordSchema.insertMany([new wordSchema({
             title: title,
             color: req.body.color,
-            fav: false,
+            fav: fav,
             _userId: req.body._userId,
             datas: datas   
-        })], () => {
-            res.send('OK')
+        })], (err, word) => {
+            res.send(word[0])
         })
     }
 })
