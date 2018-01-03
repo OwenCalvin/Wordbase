@@ -21,7 +21,13 @@ const wordSchema = mongo.model('words', new schema({
     color: String,
     fav: Boolean,
     _userId: schema.Types.ObjectId,
-    datas: []
+    datas: [
+        {
+            _dataId: schema.Types.ObjectId,
+            name: String,
+            value: String
+        }
+    ]
 }))
 
 const userSchema = mongo.model('users', new schema({
@@ -71,7 +77,7 @@ app.post('/fav', (req, res) => {
         {$set: {fav: !fav.fav}},
         {new: true}, 
         (err, word) => {
-            res.send('OK')
+            res.send(word)
         }
     )
 })
@@ -97,6 +103,32 @@ app.post('/login', (req, res) => {
     })
 })
 
+app.post('/spliceData', (req, res) => {
+    id = req.body.id
+    splice = req.body.splice
+    wordSchema.findByIdAndUpdate(
+        id, 
+        {$pull: {datas: {_id: splice}}},
+        {new: true},
+        (err, word) => {
+            res.send(word)
+        }
+    )
+})
+
+app.post('/addData', (req, res) => {
+    id = req.body.id
+    data = req.body.data
+    wordSchema.findByIdAndUpdate(
+        id,
+        {$push: {datas: data}},
+        {new: true},
+        (err, word) => {
+            res.send(word)
+        }
+    )
+})
+
 app.post('/edit', (req, res) => {
     id = req.body.id
     update = req.body.update
@@ -105,10 +137,10 @@ app.post('/edit', (req, res) => {
         {$set: update},
         {new: true}, 
         (err, word) => {
-            res.send('OK')
+            res.send(word)
         }
     )
-});
+})
 
 app.post('/register', (req, res) => {
     let username = req.body.username
@@ -154,7 +186,7 @@ app.post('/register', (req, res) => {
 })
 
 function caseInsensitive(str) {
-    return new RegExp(['^', str, '$'].join(''), 'i');   
+    return new RegExp(['^', str, '$'].join(''), 'i')
 }
 
 function messageCode(res, what = null, why = null, code = 'error', data = null) {
